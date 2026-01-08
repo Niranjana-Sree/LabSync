@@ -1,21 +1,13 @@
-// 1. IMPORT LIBRARIES
+// 1. IMPORT LIBRARIES & KEYS
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, onSnapshot, doc, updateDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
-// 2. CONFIGURATION
-const firebaseConfig = {
-  apiKey: "AIzaSyAAlonYWdCFKuTJUHq9dPBf9P7PG-Sjgfc",
-  authDomain: "campusflow-6be1d.firebaseapp.com",
-  projectId: "campusflow-6be1d",
-  storageBucket: "campusflow-6be1d.firebasestorage.app",
-  messagingSenderId: "427497385140",
-  appId: "1:427497385140:web:250ed75ee6e1ebed243be1"
-};
-const GEMINI_API_KEY = "AIzaSyD7vgBcFwdgYx1kFGssnl_x_xRqfu3EKVo"; 
+// IMPORT KEYS FROM HIDDEN FILE
+import { FIREBASE_CONFIG, GEMINI_API_KEY } from './env.js'; 
 
-// 3. INITIALIZE APP
-const app = initializeApp(firebaseConfig);
+// 2. INITIALIZE APP (Using keys from env.js)
+const app = initializeApp(FIREBASE_CONFIG);
 const db = getFirestore(app);
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
@@ -52,13 +44,11 @@ onSnapshot(collection(db, "labs"), (snapshot) => {
     });
 });
 
-// --- FEATURE 2: PLACEMENT LOGIC (RESTORED) ---
+// --- FEATURE 2: PLACEMENT LOGIC ---
 window.togglePlacementForm = () => {
     const el = document.getElementById('placementForm');
     el.style.display = (el.style.display === 'flex') ? 'none' : 'flex';
 }
-
-// REPLACE YOUR runPlacementOverride FUNCTION WITH THIS:
 
 window.runPlacementOverride = async () => {
     const reqCap = parseInt(document.getElementById('reqCapacity').value);
@@ -70,7 +60,7 @@ window.runPlacementOverride = async () => {
     
     let labsToLock = [];
     
-    // 2. ROBUST FILTER LOGIC (The Fix)
+    // 2. ROBUST FILTER LOGIC
     snapshot.forEach(doc => {
         const data = doc.data();
         
@@ -78,7 +68,6 @@ window.runPlacementOverride = async () => {
         const labCapacity = parseInt(data.capacity); 
         
         // Safety: Check Status by EXCLUSION (Match the Dashboard visual logic)
-        // If it's NOT 'placement' and NOT 'class_occupied', we consider it Free.
         const isOccupied = (data.status === 'placement' || data.status === 'class_occupied');
         
         if (!isOccupied && labCapacity >= reqCap) {
@@ -100,6 +89,7 @@ window.runPlacementOverride = async () => {
     alert("✅ SUCCESS: Placement Drive Locked! Dashboard updated.");
     window.togglePlacementForm();
 };
+
 // --- FEATURE 3: AI + APPROVAL LOGIC ---
 window.askAI = async () => {
     const userText = document.getElementById('userInput').value;
