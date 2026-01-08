@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusFlow Prototype</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="main-content">
+        <header>
+            <h1>LabSync</h1>
+            <p>Resource Commander</p>
+        </header>
+
+        <section class="control-panel">
+            <button onclick="window.togglePlacementForm()" class="btn-danger">🚨 Start Placement Drive</button>
+            
+            <div id="placementForm" class="hidden">
+                <div class="form-box">
+                    <h3>⚠️ Placement Override</h3>
+                    <div class="input-group">
+                        <label>Min Capacity:</label>
+                        <input type="number" id="reqCapacity" value="60">
+                    </div>
+                    <div class="input-group">
+                        <label>Labs Needed:</label>
+                        <input type="number" id="reqCount" value="1">
+                    </div>
+                    <div class="btn-group">
+                        <button onclick="window.runPlacementOverride()" class="btn-confirm">Lock Labs</button>
+                        <button onclick="window.togglePlacementForm()" class="btn-cancel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>🔴 Live Campus Status</h2>
+            <div id="dashboard" class="grid-container">
+                <p>Loading real-time data...</p>
+            </div>
+        </section>
+    </div>
+
+    <div class="chat-sidebar">
+        <div class="chat-header">
+            <h3>🤖 AI Assistant</h3>
+            <span class="status-dot"></span>
+        </div>
+        
+        <div class="chat-messages" id="chatHistory">
+            <div class="bot-msg">
+                Hello! I can help you find a room. Try asking: <br>
+                <em>"Need a lab for 40 students"</em>
+            </div>
+            <div id="aiResponse"></div>
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text" id="userInput" placeholder="Type your request..." onkeypress="handleEnter(event)">
+            <button onclick="window.askAI()" class="btn-send"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+    <script>
+        function handleEnter(e) {
+            if(e.key === 'Enter') window.askAI();
+        }
+    </script>
+
+</body>
+</html>
